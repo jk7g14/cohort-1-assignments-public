@@ -2,9 +2,17 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+evm_version = "paris"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 
 remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/"
 ]
+
+# Flare Coston2 Testnet
+[rpc_endpoints]
+coston2 = "https://coston2-api.flare.network/ext/bc/C/rpc"
+
+[etherscan]
+coston2 = { key = "flare-coston2", url = "https://coston2.testnet.flarescan.com/api" }
