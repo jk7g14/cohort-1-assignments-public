@@ -1,8 +1,8 @@
 const from = eth.accounts[0];
-const contractDeployer = "0x404fa3f0Acf620e3d2A3c6aa80E27b07C830EB5a";
+const contractDeployer = '0xDc5AAE0B55AA8DeD6fcbDec0d1f8CB321743Ce59'; // 본인 MetaMask 주소
 eth.sendTransaction({
   from: from,
   to: contractDeployer,
-  value: web3.toWei(100, "ether"),
+  value: web3.toWei(100, 'ether'),
 });
-// PK: be44593f36ac74d23ed0e80569b672ac08fa963ede14b63a967d92739b0c8659
+console.log('Prefunded 100 ETH to:', contractDeployer);
