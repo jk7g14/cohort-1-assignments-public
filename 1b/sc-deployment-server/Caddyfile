@@ -1,0 +1,17 @@
+:80 {
+	root * /usr/share/caddy
+	file_server
+	
+	# Serve deployment.json at root
+	handle / {
+		rewrite * /deployment.json
+		file_server
+	}
+	
+	# Enable CORS for API access
+	header {
+		Access-Control-Allow-Origin *
+		Access-Control-Allow-Methods "GET, POST, OPTIONS"
+		Access-Control-Allow-Headers "Content-Type"
+	}
+}

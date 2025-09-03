@@ -1,0 +1,29 @@
+:80 {
+	# Smart contracts deployment server
+	handle_path /deployment* {
+		reverse_proxy sc-deployment-server:80
+	}
+	
+	# EVM Node RPC service  
+	handle_path /rpc* {
+		reverse_proxy geth:8545
+	}
+	
+	# Explorer (blockscout API)
+	handle_path /explorer* {
+		reverse_proxy backend:4000
+	}
+	
+	# Graph node GraphQL playground
+	handle_path /graph-playground* {
+		reverse_proxy graphql-playground:80
+	}
+	
+	# Graph node GraphQL API
+	handle_path /graph-api* {
+		reverse_proxy graph-node:8000
+	}
+	
+	# Default response
+	respond "Local Development Environment - Available endpoints: /deployment, /rpc, /explorer, /graph-playground"
+}
