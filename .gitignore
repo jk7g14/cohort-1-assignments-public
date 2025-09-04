@@ -1,1 +1,8 @@
 .DS_Store
+
+# 1b Assignment - Local Development Environment
+1b/.env
+1b/geth_data/
+1b/deployment_output/
+1b/blockscout/docker-compose/services/logs/
+1b/graph_*_data/

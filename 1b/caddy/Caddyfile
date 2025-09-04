@@ -9,14 +9,37 @@
 		reverse_proxy geth:8545
 	}
 	
-	# Explorer (blockscout API)
+	# Explorer (blockscout frontend)
 	handle_path /explorer* {
-		reverse_proxy backend:4000
+		reverse_proxy host.docker.internal:4002
 	}
 	
-	# Graph node GraphQL playground
+	# Blockscout static assets (Next.js files, icons, etc.)
+	handle /_next* {
+		reverse_proxy host.docker.internal:4002
+	}
+	
+	handle /assets* {
+		reverse_proxy host.docker.internal:4002
+	}
+	
+	handle /icons* {
+		reverse_proxy host.docker.internal:4002
+	}
+	
+	# Blockscout API routes
+	handle /api* {
+		reverse_proxy host.docker.internal:4002
+	}
+	
+	# Blockscout WebSocket routes
+	handle /socket* {
+		reverse_proxy host.docker.internal:4002
+	}
+	
+	# Graph node GraphQL playground (built-in)
 	handle_path /graph-playground* {
-		reverse_proxy graphql-playground:80
+		reverse_proxy graph-node:8000
 	}
 	
 	# Graph node GraphQL API
@@ -24,6 +47,6 @@
 		reverse_proxy graph-node:8000
 	}
 	
-	# Default response
-	respond "Local Development Environment - Available endpoints: /deployment, /rpc, /explorer, /graph-playground"
+	# Default response - return 404 for unmatched routes
+	respond 404
 }

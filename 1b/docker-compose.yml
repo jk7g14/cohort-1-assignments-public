@@ -128,17 +128,14 @@ services:
       RUST_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 'true'
 
-  graphql-playground:
+  simple-explorer:
     image: nginx:alpine
-    container_name: graphql-playground
-    ports:
-      - '4000:80'
+    container_name: simple-explorer
     volumes:
-      - ./graphql-playground:/usr/share/nginx/html:ro
-    depends_on:
-      - graph-node
-
-  # blockscout: should be another docker-compose.yml file from https://github.com/blockscout/blockscout/tree/master/docker-compose. Don't create a container in this file.
+      - ./simple-explorer:/usr/share/nginx/html:ro
+    ports:
+      - '4003:80'
+    restart: unless-stopped
 
 volumes:
   shared_data:

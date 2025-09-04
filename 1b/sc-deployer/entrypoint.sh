@@ -40,10 +40,13 @@ forge build
 
 # Deploy the contracts
 echo "🚀 Deploying MiniAMM contracts..."
-forge script "$FOUNDRY_SCRIPT" \
+if ! forge script "$FOUNDRY_SCRIPT" \
     --rpc-url "$ETH_RPC_URL" \
     --private-key "$DEPLOYER_PRIVATE_KEY" \
-    --broadcast
+    --broadcast; then
+    echo "❌ Contract deployment failed!"
+    exit 1
+fi
 
 # Extract contract addresses from broadcast logs
 echo "📊 Extracting contract addresses..."
@@ -83,6 +86,34 @@ EOF
     NAME1=$(sed -n '1p' /tmp/names.txt)
     NAME2=$(sed -n '2p' /tmp/names.txt)
     NAME3=$(sed -n '3p' /tmp/names.txt)
+    
+    # Verify contracts are actually deployed by checking if they have code
+    echo "🔍 Verifying contract deployment..."
+    
+    verify_contract() {
+        local addr=$1
+        local name=$2
+        if [ -z "$addr" ] || [ "$addr" = "null" ] || [ "$addr" = "" ]; then
+            echo "❌ No address found for $name"
+            return 1
+        fi
+        
+        # Check if contract has code using cast
+        local code=$(cast code "$addr" --rpc-url "$ETH_RPC_URL" 2>/dev/null)
+        if [ -z "$code" ] || [ "$code" = "0x" ]; then
+            echo "❌ Contract $name at $addr has no code (deployment failed)"
+            return 1
+        else
+            echo "✅ Contract $name at $addr verified"
+            return 0
+        fi
+    }
+    
+    # Verify all contracts
+    if ! verify_contract "$ADDR1" "$NAME1" || ! verify_contract "$ADDR2" "$NAME2" || ! verify_contract "$ADDR3" "$NAME3"; then
+        echo "❌ Contract verification failed - deployment was not successful"
+        exit 1
+    fi
 
     cat >> /tmp/deployment/deployment.json << EOF
     "mock_erc_0": "$ADDR1",

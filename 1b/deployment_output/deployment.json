@@ -1,5 +1,5 @@
 {
-    "mock_erc_0": "0xa6e809b6107f254dcb9487270be6c61fb41e57a8",
-    "mock_erc_1": "0x49628f6e6944a5396688b8bed6730a5cb79b67dd", 
-    "mini_amm": "0x68b161cdfb476ad02d8dfdee81a42b7c5e36ff3e"
+    "mock_erc_0": "0x799750db3948bb50d3de68fb0fd797863b9edcae",
+    "mock_erc_1": "0x89ebdbf0b252b43b55196fd7b8edc4c1472cfe73", 
+    "mini_amm": "0xedd979bc264acb42c5496dfc8fb8542d6cd16c12"
 }

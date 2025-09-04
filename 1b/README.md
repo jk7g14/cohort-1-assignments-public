@@ -1,25 +1,54 @@
-# Local development environment setup
+# Assignment 1B - Local Development Environment
 
-Your goal is to successfully set up a local environment running on Docker Compose, comprising of:
-- **caddy**: reverse proxy. You need to route origins of exposed ports inside Docker to a single origin with the same port. For example, if your EVM node's RPC service is running at localhost:5000 and explorer at localhost:6000, you want to route them as https://myorigin.com/rpc and https://myorigin.com/explorer.
-- **ngrok**: tunnel. Sign up for ngrok and go to https://dashboard.ngrok.com/domains and get your own domain. Use the auth token and domain to tunnel your local environment to the Internet.
-- **Smart contracts deployer**: this is an ephemeral container that `git clone`s your assignment 1A and runs the deployment script against your local EVM node, and then shuts down.
-- **Smart contracts deployment server (caddy)**: contains information on the deployment (contract addresses). Use Caddy and very simple Caddyfile to host a web server on a [json file in this format](./example-deployment.json) containing deployed contract addresses. This file should be created by smart contracts deployer.
-- **EVM node (geth)**: runs a blockchain. Just ask AI to write the entrypoint script for you.
-- **Geth initialization script**: preconfigures blockchain environment. Write a short `prefund.js` script to prefund accounts for which you know the private keys, so you can use them freely. [Refer to this documentation](https://geth.ethereum.org/docs/interacting-with-geth/javascript-console#interactive-use).
-- **Explorer (blockscout)**: UI to see transactions and other data. [Refer to this documentation](https://docs.blockscout.com/setup/deployment/docker-compose-deployment). Also remember that you can run two docker compose files at the same time. Blockscout needs to be connected to the local EVM node to index blockchain data. Once Blockscout is up, you will be able to see [something like this](https://coston2-explorer.flare.network/).
-- **Graph stack**: indexes blockchain data & query. It consists of multiple containers (ipfs, postgres, redis, graph node). Graph node needs to be connected to ipfs, redis, postgres, and EVM node. A successful deployment would expose a GraphQL query playground that looks like something like this: https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/orderbook-subgraph/0.0.1/gn. For now, the Graph stack does not need to index any data.
+Docker Compose를 사용한 로컬 블록체인 개발 환경입니다.
 
-Each endpoint should be accessible via ngrok according to the following spec:
+## 🚀 Quick Start
 
-- Smart contracts deployment server: https://yourorigin.com/deployment
-- Explorer: https://yourorigin.com/explorer
-- EVM Node (RPC service): https://yourorigin.com/rpc
-- Graph node GraphQL query playground: https://yourorigin.com/graph-playground
+### 1. 환경 설정
 
-## Hints
+```bash
+# .env 파일 생성
+cp .env.example .env
+# .env 파일을 편집하여 본인의 설정값 입력
+```
 
-- If something doesn't seem to be working but you don't know which container is causing the problem, try commenting out each container at a time.
-- You don't have to understand every single construct on Docker Compose or every option/flag supplied to each container. As long as it works, it's fine.
-- Try to leverage AI as much as possible. Use AI for the big picture, and use your manual debugging skills to resolve specific problems.
-- An example repository with a slightly different configuration is at https://github.com/9oelM/xrpl-axelar-local-dev. This simulates a local EVM node connected via Axelar to an XRPL node, with other additional services.
+### 2. 필수 설정값
+
+- `DEPLOYER_PRIVATE_KEY`: 본인의 지갑 개인키
+- `DEPLOYER_ADDRESS`: 본인의 지갑 주소  
+- `NGROK_DOMAIN`: ngrok에서 발급받은 도메인
+- `NGROK_AUTHTOKEN`: ngrok 인증 토큰
+
+### 3. 서비스 시작
+
+```bash
+# 메인 서비스 시작
+docker compose up -d
+
+# Blockscout 시작 (별도 터미널)
+cd blockscout/docker-compose
+docker compose -f geth.yml up -d
+```
+
+## 🌐 접근 가능한 엔드포인트
+
+모든 서비스는 ngrok을 통해 접근 가능합니다:
+
+- **Smart Contracts Deployment**: `https://your-domain.ngrok-free.app/deployment`
+- **Blockchain Explorer**: `https://your-domain.ngrok-free.app/explorer`
+- **EVM RPC**: `https://your-domain.ngrok-free.app/rpc`
+- **GraphQL Playground**: `https://your-domain.ngrok-free.app/graph-playground`
+
+## 🏗️ 아키텍처
+
+- **Caddy**: 리버스 프록시
+- **ngrok**: 터널링
+- **Geth**: 로컬 EVM 노드
+- **Smart Contract Deployer**: 1a 과제 자동 배포
+- **Blockscout**: 블록체인 익스플로러
+- **Graph Stack**: IPFS, PostgreSQL, Redis, Graph Node
+
+## 📝 참고사항
+
+- Apple Silicon 사용자: Graph Node가 Rosetta 2를 통해 실행됩니다
+- 브라우저 콘솔의 일부 에러는 정상적인 개발 환경에서 발생하는 것입니다

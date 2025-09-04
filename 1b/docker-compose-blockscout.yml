@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  blockscout-redis:
+    image: redis:6
+    container_name: blockscout-redis
+    volumes:
+      - blockscout_redis_data:/data
+    networks:
+      - default
+
+  blockscout-db:
+    image: postgres:13
+    container_name: blockscout-db
+    environment:
+      POSTGRES_PASSWORD: ceWb1MeLBEeOIfk65gU8EjF8
+      POSTGRES_USER: blockscout
+      POSTGRES_DB: blockscout
+    volumes:
+      - blockscout_db_data:/var/lib/postgresql/data
+    networks:
+      - default
+
+  blockscout-backend:
+    image: ghcr.io/blockscout/blockscout:latest
+    container_name: blockscout-backend
+    depends_on:
+      - blockscout-db
+      - blockscout-redis
+    environment:
+      ETHEREUM_JSONRPC_VARIANT: geth
+      ETHEREUM_JSONRPC_HTTP_URL: https://lightly-supreme-dog.ngrok-free.app/rpc
+      ETHEREUM_JSONRPC_TRACE_URL: https://lightly-supreme-dog.ngrok-free.app/rpc
+      ETHEREUM_JSONRPC_WS_URL: wss://lightly-supreme-dog.ngrok-free.app/rpc
+      DATABASE_URL: postgresql://blockscout:ceWb1MeLBEeOIfk65gU8EjF8@blockscout-db:5432/blockscout?sslmode=disable
+      SECRET_KEY_BASE: 56NtB48ear7+wMSf0IQuWDAAazhpb31qyc7GiyspBP2vh7t5zlCsF5QDv76chXeN
+      PORT: 4000
+      COIN_NAME: ETH
+      COIN: ETH
+      CHAIN_ID: 1337
+      DISABLE_MARKET: true
+      RE_CAPTCHA_DISABLED: false
+      TXS_STATS_DAYS_TO_COMPILE_AT_INIT: 10
+    ports:
+      - '4001:4000'
+    networks:
+      - default
+
+volumes:
+  blockscout_redis_data:
+  blockscout_db_data:
+
+networks:
+  default:
+    external: true
+    name: 1b_default
